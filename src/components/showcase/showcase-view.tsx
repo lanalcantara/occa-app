@@ -31,8 +31,8 @@ export function ShowcaseView({ publicProfiles, currentUser }: { publicProfiles: 
                     {/* Conditional navigation button */}
                     {currentUser ? (
                         <>
-                            <Link href="/" className="px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors text-sm">
-                                Home
+                            <Link href="/dashboard" className="px-6 py-2 bg-white text-black font-semibold rounded-full hover:bg-gray-200 transition-colors text-sm">
+                                Dashboard
                             </Link>
                             {/* Avatar linking to profile */}
                             <Link href="/profile">
@@ -84,8 +84,8 @@ export function ShowcaseView({ publicProfiles, currentUser }: { publicProfiles: 
 
                     <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
                         {currentUser ? (
-                            <Link href="/" className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-200 transition-all flex items-center gap-2">
-                                Home <ArrowRight className="w-5 h-5" />
+                            <Link href="/dashboard" className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-200 transition-all flex items-center gap-2">
+                                Ir para Dashboard <ArrowRight className="w-5 h-5" />
                             </Link>
                         ) : (
                             <Link href="/login" className="px-8 py-4 bg-white text-black rounded-full font-bold text-lg hover:bg-gray-200 transition-all flex items-center gap-2">

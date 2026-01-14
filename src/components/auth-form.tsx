@@ -46,7 +46,7 @@ export function AuthForm({ isPartnerSignup = false }: { isPartnerSignup?: boolea
                 })
                 if (error) throw error
                 router.refresh()
-                router.push('/')
+                router.push('/dashboard')
             }
         } catch (err: any) {
             setError(err.message)

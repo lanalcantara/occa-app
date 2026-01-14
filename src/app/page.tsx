@@ -12,8 +12,22 @@ export default async function Home() {
   const { data: { user } } = await supabase.auth.getUser()
 
   if (user) {
-    // Authenticated? Go to Dashboard
-    redirect("/dashboard")
+    // Authenticated? Fetch Profile and show ShowcaseView with User Data
+    const { data: profile } = await supabase
+      .from('profiles')
+      .select('id, full_name, avatar_url, role, category, points, onboarding_completed')
+      .eq('id', user.id)
+      .single()
+
+    // --- PUBLIC VISITOR FLOW (SHOWCASE) ---
+    const { data: publicProfiles } = await supabase
+      .from('profiles')
+      .select('id, full_name, avatar_url, category, points')
+      .neq('role', 'admin')
+      .limit(8)
+      .order('points', { ascending: false })
+
+    return <ShowcaseView publicProfiles={publicProfiles || []} currentUser={profile} />
   }
 
   // --- PUBLIC VISITOR FLOW (SHOWCASE) ---
