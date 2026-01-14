@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { SignOutButton } from '@/components/sign-out-button'
 import { cn } from '@/lib/utils'
-import { BarChart3, Users, Award, ShoppingBag, History, Image as ImageIcon, Menu, X } from 'lucide-react'
+import { BarChart3, Users, Award, ShoppingBag, History, Image as ImageIcon, Menu, X, Map, ShieldCheck } from 'lucide-react'
 
 export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setSidebarOpen] = useState(false)
@@ -54,6 +54,14 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
                     <Link href="/admin/transactions" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/transactions' ? 'bg-white text-black font-bold shadow-lg' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
                         <History className="w-5 h-5" />
                         Transações
+                    </Link>
+                    <Link href="/admin/roadmap" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/roadmap' ? 'bg-white text-black font-bold shadow-lg' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
+                        <Map className="w-5 h-5" />
+                        Roadmap
+                    </Link>
+                    <Link href="/admin/audit" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/audit' ? 'bg-white text-black font-bold shadow-lg' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
+                        <ShieldCheck className="w-5 h-5" />
+                        Auditoria
                     </Link>
                 </nav>
 

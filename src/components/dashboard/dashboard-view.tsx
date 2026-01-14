@@ -2,8 +2,6 @@
 
 import { MemberCard } from "@/components/member-card"
 import { SignOutButton } from "@/components/sign-out-button"
-import Link from 'next/link'
-import { ShoppingBag, MessageCircle } from 'lucide-react'
 
 export function DashboardView({ profile, tasks }: { profile: any, tasks: any[] }) {
     return (
@@ -16,41 +14,6 @@ export function DashboardView({ profile, tasks }: { profile: any, tasks: any[] }
                     <div>
                         <h1 className="text-2xl font-bold">Dashboard</h1>
                         <p className="text-muted-foreground">Bem-vindo ao clube.</p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <Link href="/feedback" className="group relative overflow-hidden rounded-2xl glass-card px-6 py-4 border border-white/10 hover:border-purple-500/50 transition-all hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-purple-500/20 flex items-center justify-center">
-                                <MessageCircle className="w-5 h-5 text-purple-400" />
-                            </div>
-                            <div className="text-left hidden md:block">
-                                <h3 className="text-sm font-bold">Feedback</h3>
-                                <p className="text-xs text-muted-foreground">Avalie agora</p>
-                            </div>
-                        </Link>
-
-                        <Link href="/shop" className="group relative overflow-hidden rounded-2xl glass-card px-6 py-4 border border-white/10 hover:border-green-500/50 transition-all hover:shadow-[0_0_30px_rgba(34,197,94,0.2)] flex items-center gap-3">
-                            <div className="w-10 h-10 rounded-xl bg-green-500/20 flex items-center justify-center">
-                                <ShoppingBag className="w-5 h-5 text-green-400" />
-                            </div>
-                            <div className="text-left hidden md:block">
-                                <h3 className="text-sm font-bold">Loja</h3>
-                                <p className="text-xs text-muted-foreground">Gastar XP</p>
-                            </div>
-                        </Link>
-
-                        <Link href="/profile" title="Meu Perfil">
-                            <div className="w-10 h-10 rounded-full bg-surface border border-white/10 overflow-hidden hover:border-primary transition-colors cursor-pointer">
-                                {profile.avatar_url ? (
-                                    <img src={profile.avatar_url} className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center bg-primary/20 text-primary font-bold">
-                                        {profile.full_name?.charAt(0)}
-                                    </div>
-                                )}
-                            </div>
-                        </Link>
-
-                        <SignOutButton className="p-2 text-red-400 hover:bg-red-400/10 rounded-lg transition-colors" />
                     </div>
                 </header>
 

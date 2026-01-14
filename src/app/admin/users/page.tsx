@@ -1,6 +1,7 @@
 import { UserBoard } from "@/components/admin/user-board"
 import { AdminAvatarApprovals } from "@/components/admin/admin-approvals"
 import { AdminPartnerApprovals } from "@/components/admin/partner-approvals"
+import { AdminUserManagement } from "@/components/admin/admin-user-management"
 
 export default function UsersPage() {
     return (
@@ -23,10 +24,17 @@ export default function UsersPage() {
 
             <div className="w-full h-px bg-white/10" />
 
+            {/* USER MANAGEMENT TABLE */}
+            <section className="space-y-4">
+                <AdminUserManagement />
+            </section>
+
+            <div className="w-full h-px bg-white/10" />
+
             {/* MEMBERS SECTION */}
             <section className="space-y-4">
                 <div>
-                    <h2 className="text-xl font-bold">Gestão de Membros</h2>
+                    <h2 className="text-xl font-bold">Quadro de Membros (Categorias)</h2>
                     <p className="text-muted-foreground">Arraste os cards para mudar a categoria dos membros.</p>
                 </div>
                 <div className="h-[calc(100vh-300px)]">

@@ -12,6 +12,11 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: "OCCA | Olinda Creative Community Action",
   description: "Games, Learning, and Community",
+  icons: {
+    icon: '/occa-logo.png',
+    apple: '/occa-logo.png',
+  },
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({

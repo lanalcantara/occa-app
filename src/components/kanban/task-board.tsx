@@ -8,14 +8,11 @@ import {
     useDroppable,
     DragEndEvent,
     DragStartEvent,
-    DragOverEvent
 } from '@dnd-kit/core'
 import { createClient } from '@/lib/supabase'
-import { Plus, User, Briefcase, Coins, X, CheckCircle, Clock } from 'lucide-react'
+import { Plus, User, Coins, X, CheckCircle } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
-import { format, differenceInDays, parseISO } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
 
 // --- Types ---
 type Task = {
@@ -39,13 +36,19 @@ type Member = {
 
 type ColumnType = 'todo' | 'doing' | 'done'
 
+interface TaskBoardProps {
+    canCreate?: boolean
+    canMove?: boolean
+}
+
 // --- Components ---
 
 // Draggable Member Item (Sidebar)
-function DraggableMember({ member }: { member: Member }) {
+function DraggableMember({ member, disabled }: { member: Member; disabled?: boolean }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: `member-${member.id}`,
-        data: { type: 'member', member }
+        data: { type: 'member', member },
+        disabled: disabled
     })
 
     const style = transform ? {
@@ -59,8 +62,10 @@ function DraggableMember({ member }: { member: Member }) {
             {...listeners}
             {...attributes}
             className={cn(
-                "flex items-center gap-3 p-3 bg-surface border border-white/5 rounded-lg cursor-grab hover:bg-white/5 active:cursor-grabbing",
-                isDragging && "opacity-50"
+                "flex items-center gap-3 p-3 bg-surface border border-white/5 rounded-lg",
+                !disabled && "cursor-grab hover:bg-white/5 active:cursor-grabbing",
+                isDragging && "opacity-50",
+                disabled && "opacity-70 cursor-default"
             )}
         >
             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary border border-white/5">
@@ -79,19 +84,17 @@ function DraggableMember({ member }: { member: Member }) {
 }
 
 // Kanban Task Card
-function TaskCard({ task }: { task: Task }) {
+function TaskCard({ task, canMove }: { task: Task; canMove?: boolean }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id: task.id,
         data: { type: 'task', task },
-        disabled: task.status === 'completed' // Disable dragging if already done? Or allow moving back? 
-        // Let's disable moving back from Done for now to keep payment simple.
+        disabled: !canMove || task.status === 'completed'
     })
 
-    // Also make it valid drop target for Members if it's in ToDo or Doing
     const { setNodeRef: setDropRef, isOver } = useDroppable({
         id: `drop-task-${task.id}`,
         data: { type: 'task-drop-zone', task },
-        disabled: task.status === 'completed'
+        disabled: !canMove || task.status === 'completed'
     })
 
     const style = transform ? {
@@ -102,25 +105,22 @@ function TaskCard({ task }: { task: Task }) {
         <div
             ref={setNodeRef}
             style={style}
-            {...listeners} // Make the whole card draggable?
+            {...listeners}
             {...attributes}
             className={cn(
-                "relative p-4 rounded-xl border transition-all group touch-none", // touch-none for DnD
+                "relative p-4 rounded-xl border transition-all group touch-none",
                 task.status === 'completed' ? "bg-green-500/5 border-green-500/20" :
                     task.assigned_to
                         ? "bg-surface/50 border-white/5" // Assigned
                         : "glass-card border-white/10", // Open
                 isDragging && "opacity-30 z-50 rotate-3",
+                !canMove && "cursor-default"
             )}
         >
             {/* Drop Zone overlay for Members */}
             <div ref={setDropRef} className={cn(
-                "absolute inset-0 z-10 rounded-xl transition-colors pointer-events-none", // pointer-events-none usually blocks drop? No, drop works on rect.
-                // Wait, if pointer-events-none, useDroppable might not detect? 
-                // Using a separate div for specific member drop might be tricky. 
-                // Let's rely on the card ref itself being draggable AND having a logical droppable wrapper?
-                // Actually @dnd-kit allows separate useDraggable and useDroppable on same node.
-                isOver && "bg-primary/20 border-2 border-primary"
+                "absolute inset-0 z-10 rounded-xl transition-colors pointer-events-none",
+                isOver && canMove && "bg-primary/20 border-2 border-primary"
             )} />
 
             <div className="flex justify-between items-start mb-2 relative z-20">
@@ -137,9 +137,9 @@ function TaskCard({ task }: { task: Task }) {
                 </div>
             </div>
 
-            <h3 className="font-bold text-sm mb-1 relative z-20">{task.title}</h3>
+            <h3 className="font-bold text-sm mb-1 relative z-20 break-words">{task.title}</h3>
             {task.status !== 'completed' && (
-                <p className="text-xs text-muted-foreground line-clamp-2 mb-3 relative z-20">{task.description}</p>
+                <p className="text-xs text-muted-foreground line-clamp-2 mb-3 relative z-20 break-words">{task.description}</p>
             )}
 
             <div className="pt-2 border-t border-white/5 flex items-center justify-between mt-auto relative z-20">
@@ -170,10 +170,11 @@ function TaskCard({ task }: { task: Task }) {
 }
 
 // Kanban Column
-function KanbanColumn({ id, title, tasks }: { id: ColumnType, title: string, tasks: Task[] }) {
+function KanbanColumn({ id, title, tasks, canMove }: { id: ColumnType, title: string, tasks: Task[], canMove?: boolean }) {
     const { setNodeRef, isOver } = useDroppable({
         id: id,
-        data: { type: 'column', columnId: id }
+        data: { type: 'column', columnId: id },
+        disabled: !canMove
     })
 
     return (
@@ -192,10 +193,10 @@ function KanbanColumn({ id, title, tasks }: { id: ColumnType, title: string, tas
                 ref={setNodeRef}
                 className={cn(
                     "flex-1 p-3 space-y-3 overflow-y-auto transition-colors",
-                    isOver && "bg-white/5"
+                    isOver && canMove && "bg-white/5"
                 )}>
                 {tasks.map(task => (
-                    <TaskCard key={task.id} task={task} />
+                    <TaskCard key={task.id} task={task} canMove={canMove} />
                 ))}
 
                 {tasks.length === 0 && (
@@ -208,7 +209,7 @@ function KanbanColumn({ id, title, tasks }: { id: ColumnType, title: string, tas
     )
 }
 
-export function TaskBoard() {
+export function TaskBoard({ canCreate = false, canMove = false }: TaskBoardProps) {
     const [tasks, setTasks] = useState<Task[]>([])
     const [members, setMembers] = useState<Member[]>([])
     const [activeDragData, setActiveDragData] = useState<any>(null)
@@ -220,6 +221,20 @@ export function TaskBoard() {
 
     useEffect(() => {
         fetchData()
+
+        // Real-time subscription for Tasks
+        const tasksSubscription = supabase
+            .channel('public:tasks')
+            .on('postgres_changes', { event: '*', schema: 'public', table: 'tasks' }, (payload) => {
+                console.log('Real-time change received!', payload)
+                // Just refetch for simplicity and correctness (especially with joins)
+                fetchData()
+            })
+            .subscribe()
+
+        return () => {
+            supabase.removeChannel(tasksSubscription)
+        }
     }, [])
 
     async function fetchData() {
@@ -242,7 +257,7 @@ export function TaskBoard() {
             const visibleTasks = tasksData.filter(t => {
                 if (t.status !== 'completed') return true
                 return new Date(t.updated_at) > threeDaysAgo
-            }) as Task[] // forceful cast for type safety if needed
+            }) as Task[]
 
             setTasks(visibleTasks)
         }
@@ -269,10 +284,12 @@ export function TaskBoard() {
     }
 
     function handleDragStart(event: DragStartEvent) {
+        if (!canMove) return
         setActiveDragData(event.active.data.current)
     }
 
     async function handleDragEnd(event: DragEndEvent) {
+        if (!canMove) return
         const { active, over } = event
         setActiveDragData(null)
 
@@ -331,7 +348,6 @@ export function TaskBoard() {
 
                 if (error || (data && !data.success)) {
                     console.error('RPC Error Details:', { error, data, taskId })
-                    console.error('RPC Error Details:', { error, data, taskId })
                     alert(`Erro ao concluir tarefa: ${error?.message || data?.message || 'Erro desconhecido'}`)
                     fetchData() // Revert UI on error
                 }
@@ -354,14 +370,19 @@ export function TaskBoard() {
     const doingTasks = tasks.filter(t => t.status === 'in_progress')
     const doneTasks = tasks.filter(t => t.status === 'completed')
 
+    const [activeMobileTab, setActiveMobileTab] = useState<ColumnType>('todo')
+
     return (
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-            <div className="flex h-[calc(100vh-140px)] gap-6 relative">
+            <div className="flex flex-col md:flex-row h-[calc(100vh-140px)] gap-6 relative">
 
-                {/* LEFT: Members Sidebar */}
+                {/* LEFT: Members Sidebar (Hidden on Mobile for now or stackable?? Let's hide on specific mobile breakdown or keep it) 
+                    Actually, let's keep members sidebar on Desktop, maybe hide or different view on mobile?
+                    For this request "deixe o quadro de tarefas de uma forma mais legal no mobile", focusing on columns is key.
+                */}
                 <div
                     className={cn(
-                        "w-64 flex flex-col glass-card border rounded-xl overflow-hidden transition-colors flex-shrink-0",
+                        "hidden md:flex w-64 flex-col glass-card border rounded-xl overflow-hidden transition-colors flex-shrink-0",
                         "border-white/10"
                     )}
                 >
@@ -373,29 +394,52 @@ export function TaskBoard() {
                     </div>
                     <div className="flex-1 overflow-y-auto p-3 space-y-2">
                         {members.map(member => (
-                            <DraggableMember key={member.id} member={member} />
+                            <DraggableMember key={member.id} member={member} disabled={!canMove} />
                         ))}
                     </div>
                 </div>
 
+                {/* MOBILE TABS */}
+                <div className="md:hidden flex gap-2 p-1 bg-white/5 rounded-lg mb-2 flex-shrink-0 mx-4">
+                    <button onClick={() => setActiveMobileTab('todo')} className={cn("flex-1 py-2 text-xs font-bold rounded uppercase tracking-wider", activeMobileTab === 'todo' ? "bg-white text-black" : "text-muted-foreground")}>To Do</button>
+                    <button onClick={() => setActiveMobileTab('doing')} className={cn("flex-1 py-2 text-xs font-bold rounded uppercase tracking-wider", activeMobileTab === 'doing' ? "bg-blue-500 text-white" : "text-muted-foreground")}>Doing</button>
+                    <button onClick={() => setActiveMobileTab('done')} className={cn("flex-1 py-2 text-xs font-bold rounded uppercase tracking-wider", activeMobileTab === 'done' ? "bg-green-500 text-white" : "text-muted-foreground")}>Done</button>
+                </div>
+
                 {/* RIGHT: Kanban Columns */}
-                <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-x-auto pb-4">
-                    <KanbanColumn id="todo" title="To Do" tasks={todoTasks} />
-                    <KanbanColumn id="doing" title="Doing" tasks={doingTasks} />
-                    <KanbanColumn id="done" title="Done" tasks={doneTasks} />
+                <div className="flex-1 flex flex-col md:flex-row gap-4 overflow-hidden relative">
+                    {/* Mobile: Show only active tab */}
+                    <div className={cn("md:hidden flex-1 h-full px-4", activeMobileTab === 'todo' ? 'block' : 'hidden')}>
+                        <KanbanColumn id="todo" title="To Do" tasks={todoTasks} canMove={canMove} />
+                    </div>
+                    <div className={cn("md:hidden flex-1 h-full px-4", activeMobileTab === 'doing' ? 'block' : 'hidden')}>
+                        <KanbanColumn id="doing" title="Doing" tasks={doingTasks} canMove={canMove} />
+                    </div>
+                    <div className={cn("md:hidden flex-1 h-full px-4", activeMobileTab === 'done' ? 'block' : 'hidden')}>
+                        <KanbanColumn id="done" title="Done" tasks={doneTasks} canMove={canMove} />
+                    </div>
+
+                    {/* Desktop: Show all */}
+                    <div className="hidden md:flex flex-1 gap-4 overflow-x-auto pb-4 h-full">
+                        <KanbanColumn id="todo" title="To Do" tasks={todoTasks} canMove={canMove} />
+                        <KanbanColumn id="doing" title="Doing" tasks={doingTasks} canMove={canMove} />
+                        <KanbanColumn id="done" title="Done" tasks={doneTasks} canMove={canMove} />
+                    </div>
                 </div>
 
                 {/* Absolute Create Button */}
-                <button
-                    onClick={() => setIsCreateOpen(true)}
-                    className="absolute top-0 right-0 px-4 py-2 bg-primary hover:bg-primary/90 rounded-lg font-medium flex items-center gap-2 transition-colors shadow-lg z-50 transform -translate-y-12" // Float above in header area
-                >
-                    <Plus className="w-4 h-4" />
-                    Nova Tarefa
-                </button>
+                {canCreate && (
+                    <button
+                        onClick={() => setIsCreateOpen(true)}
+                        className="absolute bottom-6 right-6 md:top-0 md:right-0 md:bottom-auto md:translate-y-[-3rem] px-4 py-3 md:py-2 bg-white text-black hover:bg-white/90 rounded-full md:rounded-lg font-bold flex items-center gap-2 transition-colors shadow-lg z-50"
+                    >
+                        <Plus className="w-5 h-5 md:w-4 md:h-4" />
+                        <span className="hidden md:inline">Nova Tarefa</span>
+                    </button>
+                )}
 
                 <DragOverlay>
-                    {activeDragData?.type === 'member' && (
+                    {activeDragData?.type === 'member' && canMove && (
                         <div className="flex items-center gap-3 p-3 bg-surface border border-primary/50 rounded-lg shadow-2xl w-64 opacity-90 cursor-grabbing">
                             <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-bold text-primary">
                                 {activeDragData.member.full_name.charAt(0)}
@@ -404,16 +448,16 @@ export function TaskBoard() {
                         </div>
                     )}
 
-                    {activeDragData?.type === 'task' && (
+                    {activeDragData?.type === 'task' && canMove && (
                         <div className="w-[300px] opacity-90 cursor-grabbing">
-                            <TaskCard task={activeDragData.task} />
+                            <TaskCard task={activeDragData.task} canMove={canMove} />
                         </div>
                     )}
                 </DragOverlay>
 
                 {/* Create Modal */}
                 <AnimatePresence>
-                    {isCreateOpen && (
+                    {isCreateOpen && canCreate && (
                         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
                             <motion.div
                                 initial={{ opacity: 0, scale: 0.95 }}

@@ -87,3 +87,35 @@ body {
   @apply glass rounded-xl;
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
 }
+
+/* React Flow Overrides */
+.react-flow__attribution {
+  display: none;
+}
+
+.react-flow__handle {
+  border: 2px solid theme('colors.background') !important;
+}
+
+.react-flow__controls {
+  background: #262626 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
+}
+
+.react-flow__controls-button {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: transparent !important;
+  color: #A1A1AA !important;
+}
+
+.react-flow__controls-button:hover {
+  background: rgba(255, 255, 255, 0.05) !important;
+  color: #ffffff !important;
+}
+
+.react-flow__controls-button svg {
+  fill: currentColor !important;
+}
