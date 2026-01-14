@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #FF4D00;
+  --color-primary-foreground: #FFFFFF;
+
+  --color-secondary: #00BFA6;
+  --color-secondary-foreground: #FFFFFF;
+
+  --color-accent: #7C3AED;
+  --color-accent-foreground: #FFFFFF;
+
+  --color-background: #0F0F12;
+  --color-foreground: #EDEDED;
+
+  --color-surface: #18181B;
+  --color-surface-foreground: #E4E4E7;
+
+  --color-muted: #27272A;
+  --color-muted-foreground: #A1A1AA;
+
+  --color-card: #18181B;
+  --color-card-foreground: #EDEDED;
+
+  --color-border: #27272A;
+  --color-input: #27272A;
+
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+
+    to {
+      height: 0;
+    }
+  }
+}
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@utility glass {
+  background: rgba(24, 24, 27, 0.6);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@utility glass-card {
+  @apply glass rounded-xl;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+}
