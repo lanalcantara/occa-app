@@ -35,7 +35,7 @@ export default function TasksPage() {
 
     return (
         <div className="container mx-auto py-8 space-y-6">
-            <Link href="/" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-white transition-colors px-4 md:px-0 mb-[-1rem]">
+            <Link href="/dashboard" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-white transition-colors px-4 md:px-0 mb-[-1rem]">
                 <ArrowLeft className="w-4 h-4" />
                 Voltar ao Dashboard
             </Link>
