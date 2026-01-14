@@ -17,7 +17,7 @@ import { SignOutButton } from "./sign-out-button"
 const sidebarItems = [
     {
         title: "Dashboard",
-        href: "/",
+        href: "/dashboard",
         icon: LayoutDashboard,
         color: "text-blue-400",
         bgColor: "bg-blue-500/10",
@@ -77,7 +77,7 @@ export function UserSidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: (
             )}>
                 {/* Logo Area */}
                 <div className="flex items-center gap-3 px-2 mb-8 mt-2 justify-between">
-                    <div className="flex items-center gap-3">
+                    <Link href="/dashboard" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                         <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center border border-primary/20">
                             <span className="font-black text-primary">OC</span>
                         </div>
@@ -85,7 +85,7 @@ export function UserSidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: (
                             <h1 className="font-bold text-sm tracking-wide">OCCA</h1>
                             <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Membro</p>
                         </div>
-                    </div>
+                    </Link>
                     {/* Close Button Mobile */}
                     <button onClick={onClose} className="md:hidden p-1 hover:bg-white/10 rounded-md">
                         <LogOut className="w-5 h-5 rotate-180" /> {/* Using LogOut kind of as an exit icon or use X */}
