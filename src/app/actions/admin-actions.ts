@@ -144,3 +144,29 @@ export async function createAdminUser(name: string, email: string, cpf: string, 
     revalidatePath('/admin/users')
     return { success: true, tempPassword: password }
 }
+
+/**
+ * Demote an Admin to Member role.
+ */
+export async function demoteToMember(targetUserId: string) {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) throw new Error('Unauthorized')
+
+    // Verify requester is admin
+    const { data: requesterProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
+    if (requesterProfile?.role !== 'admin') throw new Error('Unauthorized: Must be an admin')
+
+    // Prevent self-demotion (optional but good practice)
+    if (user.id === targetUserId) throw new Error('You cannot demote yourself.')
+
+    // Update target profile
+    const { error } = await supabaseAdmin.from('profiles').update({ role: 'member' }).eq('id', targetUserId)
+
+    if (error) throw new Error('Failed to demote user: ' + error.message)
+
+    await logAction(user.id, 'DEMOTE_ADMIN', targetUserId, { timestamp: new Date().toISOString() })
+    revalidatePath('/admin/users')
+    return { success: true }
+}
