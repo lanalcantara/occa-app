@@ -4,12 +4,12 @@ import { useState } from "react"
 import { Menu } from "lucide-react"
 import { UserSidebar } from "./user-sidebar"
 
-export function UserLayoutClient({ children }: { children: React.ReactNode }) {
+export function UserLayoutClient({ children, isSocialClub = true }: { children: React.ReactNode, isSocialClub?: boolean }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false)
 
     return (
         <div className="flex h-screen w-full bg-background overflow-hidden relative">
-            <UserSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+            <UserSidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} isSocialClub={isSocialClub} />
 
             <div className="flex-1 flex flex-col md:pl-64 h-full relative z-10 transition-all">
                 {/* Mobile Header for Toggle */}

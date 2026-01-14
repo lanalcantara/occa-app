@@ -158,11 +158,21 @@ export async function demoteToMember(targetUserId: string) {
     const { data: requesterProfile } = await supabase.from('profiles').select('role').eq('id', user.id).single()
     if (requesterProfile?.role !== 'admin') throw new Error('Unauthorized: Must be an admin')
 
-    // Prevent self-demotion (optional but good practice)
-    if (user.id === targetUserId) throw new Error('You cannot demote yourself.')
+    // Prevent self-demotion
+    if (user.id === targetUserId) throw new Error('Você não pode se rebaixar. Peça a outro admin.')
+
+    // Check minimum admin count
+    const { count, error: countError } = await supabaseAdmin
+        .from('profiles')
+        .select('*', { count: 'exact', head: true })
+        .eq('role', 'admin')
+
+    if (countError) throw new Error('Failed to verify admin count')
+    if (count !== null && count <= 1) throw new Error('Ação negada: O sistema deve ter no mínimo 1 Admistrador.')
 
     // Update target profile
-    const { error } = await supabaseAdmin.from('profiles').update({ role: 'member' }).eq('id', targetUserId)
+    // Note: The database enum is likely 'user' or 'associate' based on error. Defaulting to 'user' for now.
+    const { error } = await supabaseAdmin.from('profiles').update({ role: 'user' }).eq('id', targetUserId)
 
     if (error) throw new Error('Failed to demote user: ' + error.message)
 

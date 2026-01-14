@@ -50,6 +50,12 @@ export function RoadmapEditor() {
     const [customObjectImage, setCustomObjectImage] = useState('');
     const [isCustomObjectOpen, setIsCustomObjectOpen] = useState(false);
 
+    // Search Logic
+    const [searchTerm, setSearchTerm] = useState('')
+    const filteredMembers = members.filter(member =>
+        member.full_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
     useEffect(() => {
         // Load Roadmap Logic (Assuming single roadmap for now or ID passed via props)
         loadRoadmap();
@@ -259,30 +265,46 @@ export function RoadmapEditor() {
                         )}
                     </div>
 
-                    <div className="flex-1 overflow-auto min-h-0">
-                        <h3 className="font-bold mb-2 text-sm text-muted-foreground uppercase tracking-widest">Membros do Banco</h3>
-                        {members.map(member => (
-                            <div
-                                key={member.id}
-                                className="p-2 mb-2 bg-white/5 border border-white/10 rounded-full cursor-grab flex items-center gap-2 hover:bg-white/10 transition-colors"
-                                onDragStart={(event) => {
-                                    event.dataTransfer.setData('application/reactflow/type', 'member');
-                                    event.dataTransfer.setData('application/reactflow/label', member.full_name.split(' ')[0]);
-                                    event.dataTransfer.setData('application/reactflow/data', JSON.stringify({ avatar_url: member.avatar_url }));
-                                    event.dataTransfer.effectAllowed = 'move';
-                                }}
-                                draggable
-                            >
-                                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border border-white/10">
-                                    {member.avatar_url ? (
-                                        <img src={member.avatar_url} className="w-full h-full object-cover" />
-                                    ) : (
-                                        <span className="text-[10px] font-bold text-primary">{member.full_name?.charAt(0)}</span>
-                                    )}
+                    <div className="flex-1 overflow-auto min-h-0 flex flex-col">
+                        <h3 className="font-bold mb-2 text-sm text-muted-foreground uppercase tracking-widest sticky top-0 bg-surface z-10 py-2">Membros do Banco</h3>
+
+                        {/* Member Search */}
+                        <div className="mb-2 px-1">
+                            <input
+                                placeholder="Buscar membro..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full text-xs p-2 bg-black/20 rounded-lg border border-white/10 focus:border-primary/50 outline-none placeholder:text-muted-foreground/50"
+                            />
+                        </div>
+
+                        <div className="overflow-y-auto flex-1 pr-1">
+                            {filteredMembers.map(member => (
+                                <div
+                                    key={member.id}
+                                    className="p-2 mb-2 bg-white/5 border border-white/10 rounded-full cursor-grab flex items-center gap-2 hover:bg-white/10 transition-colors"
+                                    onDragStart={(event) => {
+                                        event.dataTransfer.setData('application/reactflow/type', 'member');
+                                        event.dataTransfer.setData('application/reactflow/label', member.full_name.split(' ')[0]);
+                                        event.dataTransfer.setData('application/reactflow/data', JSON.stringify({ avatar_url: member.avatar_url }));
+                                        event.dataTransfer.effectAllowed = 'move';
+                                    }}
+                                    draggable
+                                >
+                                    <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden border border-white/10">
+                                        {member.avatar_url ? (
+                                            <img src={member.avatar_url} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-[10px] font-bold text-primary">{member.full_name?.charAt(0)}</span>
+                                        )}
+                                    </div>
+                                    <span className="text-xs font-medium truncate">{member.full_name}</span>
                                 </div>
-                                <span className="text-xs font-medium truncate">{member.full_name}</span>
-                            </div>
-                        ))}
+                            ))}
+                            {filteredMembers.length === 0 && (
+                                <p className="text-xs text-muted-foreground text-center py-4">Nenhum membro encontrado.</p>
+                            )}
+                        </div>
                     </div>
 
                     <div className="pt-4 border-t border-white/5">

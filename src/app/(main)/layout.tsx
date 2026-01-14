@@ -12,11 +12,13 @@ export default async function MainLayout({
 
     if (!user) return redirect("/login")
 
-    // Optional: Check if user is admin and redirect to /admin? 
-    // Or allow admins to see user view too? 
-    // Usually admins might want to see user view. 
-    // If we force redirect, admin can't see "My Profile" as user.
-    // Let's keep it simple: Authenticated = Access.
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_social_club')
+        .eq('id', user.id)
+        .single()
 
-    return <UserLayoutClient>{children}</UserLayoutClient>
+    const isSocialClub = profile?.is_social_club ?? false
+
+    return <UserLayoutClient isSocialClub={isSocialClub}>{children}</UserLayoutClient>
 }

@@ -25,15 +25,18 @@ export function AuthForm({ isPartnerSignup = false }: { isPartnerSignup?: boolea
 
         try {
             if (isSignUp) {
+                const isGeneralMember = email.endsWith('@membro.com')
+
                 const { error } = await supabase.auth.signUp({
                     email,
                     password,
                     options: {
                         emailRedirectTo: `${location.origin}/auth/callback`,
                         data: {
-                            full_name: email.split('@')[0], // Default name
+                            full_name: email.split('@')[0],
                             avatar_url: '',
-                            is_partner_signup: isPartnerSignup // Flag for onboarding
+                            is_partner_signup: isPartnerSignup,
+                            is_social_club: !isGeneralMember // If @membro.com, then NOT social club (General Member)
                         }
                     },
                 })
@@ -45,6 +48,18 @@ export function AuthForm({ isPartnerSignup = false }: { isPartnerSignup?: boolea
                     password,
                 })
                 if (error) throw error
+
+                // Check role for redirect
+                const { data: { user } } = await supabase.auth.getUser()
+                if (user) {
+                    const { data: profile } = await supabase.from('profiles').select('is_social_club').eq('id', user.id).single()
+                    if (profile && profile.is_social_club === false) {
+                        router.push('/profile')
+                        router.refresh()
+                        return
+                    }
+                }
+
                 router.refresh()
                 router.push('/dashboard')
             }

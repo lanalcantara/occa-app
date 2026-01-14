@@ -73,6 +73,21 @@ export function AdminUserManagement() {
         }
     }
 
+    async function handleDemote(user: UserProfile) {
+        if (!confirm(`Tem certeza que deseja rebaixar ${user.full_name} para Membro comum?`)) return
+
+        setActionLoading(true)
+        try {
+            await demoteToMember(user.id)
+            setUsers(prev => prev.map(u => u.id === user.id ? { ...u, role: 'user' as any } : u))
+            alert('Usuário rebaixado para membro com sucesso.')
+        } catch (error: any) {
+            alert(error.message)
+        } finally {
+            setActionLoading(false)
+        }
+    }
+
     async function handleCreateSubmit() {
         if (!newAdmin.name || !newAdmin.email || !newAdmin.cpf) {
             alert('Preencha todos os campos.')
@@ -169,7 +184,7 @@ export function AdminUserManagement() {
                                     )}
                                 </td>
                                 <td className="px-6 py-4 text-right flex justify-end gap-2">
-                                    {user.role !== 'admin' && (
+                                    {user.role !== 'admin' ? (
                                         <button
                                             onClick={() => handlePromote(user)}
                                             disabled={actionLoading}
@@ -177,6 +192,15 @@ export function AdminUserManagement() {
                                             title="Promover a Admin"
                                         >
                                             <Shield className="w-4 h-4" />
+                                        </button>
+                                    ) : (
+                                        <button
+                                            onClick={() => handleDemote(user)}
+                                            disabled={actionLoading}
+                                            className="p-2 hover:bg-yellow-500/10 text-muted-foreground hover:text-yellow-400 rounded-lg transition-colors disabled:opacity-50"
+                                            title="Rebaixar para Membro"
+                                        >
+                                            <ArrowDownCircle className="w-4 h-4" />
                                         </button>
                                     )}
                                     <button

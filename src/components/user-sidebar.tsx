@@ -57,8 +57,12 @@ const sidebarItems = [
     }
 ]
 
-export function UserSidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: () => void }) {
+export function UserSidebar({ isOpen, onClose, isSocialClub = true }: { isOpen?: boolean; onClose?: () => void, isSocialClub?: boolean }) {
     const pathname = usePathname()
+
+    const filteredItems = isSocialClub
+        ? sidebarItems
+        : sidebarItems.filter(item => item.href === '/profile') // Only Profile for general members
 
     return (
         <>
@@ -94,7 +98,7 @@ export function UserSidebar({ isOpen, onClose }: { isOpen?: boolean; onClose?: (
 
                 {/* Navigation */}
                 <nav className="flex-1 space-y-2">
-                    {sidebarItems.map((item) => {
+                    {filteredItems.map((item) => {
                         const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href))
                         const Icon = item.icon
 

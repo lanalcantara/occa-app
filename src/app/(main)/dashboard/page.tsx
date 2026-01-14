@@ -15,6 +15,7 @@ export default async function DashboardPage() {
         .single()
 
     // Redirects based on role/status
+    if (profile?.is_social_club === false) redirect("/profile")
     if (!profile?.onboarding_completed) redirect("/onboarding")
     if (profile?.role === 'admin') redirect("/admin")
 

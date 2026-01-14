@@ -20,11 +20,15 @@ export default function TasksPage() {
         if (user) {
             const { data: profile } = await supabase
                 .from('profiles')
-                .select('can_move_tasks')
+                .select('can_move_tasks, is_social_club')
                 .eq('id', user.id)
                 .single()
 
             if (profile) {
+                if (profile.is_social_club === false) {
+                    window.location.href = '/profile' // Force redirect
+                    return
+                }
                 setCanMove(profile.can_move_tasks || false)
             }
         }
