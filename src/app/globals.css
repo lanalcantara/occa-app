@@ -1,36 +1,45 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #FF4D00;
-  --color-primary-foreground: #FFFFFF;
+  /* OCCA Brand Colors (Premium Monochrome) */
+  --color-primary: #FFFFFF;
+  /* High-end White */
+  --color-primary-foreground: #000000;
+  /* Black text */
 
-  --color-secondary: #00BFA6;
-  --color-secondary-foreground: #FFFFFF;
+  --color-secondary: #E5E5E5;
+  /* Light Gray */
+  --color-secondary-foreground: #000000;
 
-  --color-accent: #7C3AED;
-  --color-accent-foreground: #FFFFFF;
+  --color-accent: #FFFFFF;
+  /* White Accent */
+  --color-accent-foreground: #000000;
 
-  --color-background: #0F0F12;
-  --color-foreground: #EDEDED;
+  --color-background: #1E1D1C;
+  /* Dark Charcoal / Off-black */
+  --color-foreground: #F2F2F2;
+  /* Off-white text */
 
-  --color-surface: #18181B;
-  --color-surface-foreground: #E4E4E7;
+  --color-surface: #262626;
+  /* Slightly lighter dark for cards */
+  --color-surface-foreground: #F2F2F2;
 
-  --color-muted: #27272A;
+  --color-muted: #34394D;
+  /* Muted Blue-Gray */
   --color-muted-foreground: #A1A1AA;
 
-  --color-card: #18181B;
-  --color-card-foreground: #EDEDED;
+  --color-card: #262626;
+  --color-card-foreground: #F2F2F2;
 
-  --color-border: #27272A;
-  --color-input: #27272A;
+  --color-border: #3F3F46;
+  --color-input: #262626;
 
   --radius-lg: 0.5rem;
   --radius-md: calc(0.5rem - 2px);
   --radius-sm: calc(0.5rem - 4px);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-poppins);
+  --font-mono: monospace;
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;

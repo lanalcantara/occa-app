@@ -29,29 +29,29 @@ export function AdminLayoutClient({ children }: { children: React.ReactNode }) {
                 isSidebarOpen ? "translate-x-0" : "-translate-x-full"
             )}>
                 <div className="hidden md:block p-6 border-b border-white/5">
-                    <h1 className="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-                        OCCA Admin
-                    </h1>
+                    <Link href="/intro" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+                        <img src="/occa-logo.png" alt="OCCA" className="h-8 w-auto invert brightness-0" />
+                    </Link>
                 </div>
 
                 <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                    <Link href="/admin" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin' ? 'bg-primary text-white font-bold' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
+                    <Link href="/admin" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin' ? 'bg-white text-black font-bold shadow-lg' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
                         <BarChart3 className="w-5 h-5" />
-                        Dashboard
+                        Home
                     </Link>
-                    <Link href="/admin/users" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/users' ? 'bg-primary text-white font-bold' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
+                    <Link href="/admin/users" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/users' ? 'bg-white text-black font-bold shadow-lg' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
                         <Users className="w-5 h-5" />
                         Membros e Perfis
                     </Link>
-                    <Link href="/admin/tasks" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/tasks' ? 'bg-primary text-white font-bold' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
+                    <Link href="/admin/tasks" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/tasks' ? 'bg-white text-black font-bold shadow-lg' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
                         <Award className="w-5 h-5" />
                         Tarefas e Pontos
                     </Link>
-                    <Link href="/admin/products" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/products' ? 'bg-primary text-white font-bold' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
+                    <Link href="/admin/products" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/products' ? 'bg-white text-black font-bold shadow-lg' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
                         <ShoppingBag className="w-5 h-5" />
                         Produtos
                     </Link>
-                    <Link href="/admin/transactions" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/transactions' ? 'bg-primary text-white font-bold' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
+                    <Link href="/admin/transactions" onClick={() => setSidebarOpen(false)} className={cn("flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-sm font-medium", pathname === '/admin/transactions' ? 'bg-white text-black font-bold shadow-lg' : 'text-muted-foreground hover:bg-white/5 hover:text-white')}>
                         <History className="w-5 h-5" />
                         Transações
                     </Link>

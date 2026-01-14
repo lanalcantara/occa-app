@@ -113,7 +113,7 @@ export function AuthForm({ isPartnerSignup = false }: { isPartnerSignup?: boolea
                 <button
                     type="submit"
                     disabled={loading}
-                    className="w-full py-2.5 rounded-lg font-medium bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-lg font-medium bg-white text-black hover:bg-gray-200 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 >
                     {loading && <Loader2 className="w-4 h-4 animate-spin" />}
                     {isSignUp ? 'Criar Conta' : 'Entrar'}
