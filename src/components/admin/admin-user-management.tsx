@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useState, useEffect } from 'react'
 import { createClient } from '@/lib/supabase'
 import { deleteUser, promoteToAdmin, demoteToMember, createAdminUser } from '@/app/actions/admin-actions'
 import { Trash2, Shield, UserPlus, AlertTriangle, X, Check, Loader2, ArrowDownCircle } from 'lucide-react'
